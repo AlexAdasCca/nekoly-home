@@ -2,27 +2,27 @@
   {
     "icon": "Blog",
     "name": "博客",
-    "link": "https://blog.imsyy.top/"
+    "link": "https://blog.nekoly.xyz/"
   },
   {
     "icon": "Cloud",
     "name": "网盘",
-    "link": "https://pan.imsyy.top/"
+    "link": "https://pan.nekoly.xyz/"
   },
   {
     "icon": "CompactDisc",
     "name": "音乐",
-    "link": "https://music.imsyy.top/"
+    "link": "https://www.nekoly.xyz/"
   },
   {
     "icon": "Compass",
     "name": "起始页",
-    "link": "https://nav.imsyy.top/"
+    "link": "https://nav.nekoly.xyz/"
   },
   {
     "icon": "Book",
-    "name": "网址集",
-    "link": "https://web.imsyy.top/"
+    "name": "收藏集",
+    "link": "https://web.nekoly.xyz/"
   },
   {
     "icon": "Fire",
@@ -32,6 +32,6 @@
   {
     "icon": "LaptopCode",
     "name": "站点监测",
-    "link": "https://status.imsyy.top/"
+    "link": "https://status.nekoly.xyz/"
   }
 ]

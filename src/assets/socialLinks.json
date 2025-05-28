@@ -3,36 +3,36 @@
     "name": "Github",
     "icon": "/images/icon/github.png",
     "tip": "去 Github 看看",
-    "url": "https://github.com/imsyy"
+    "url": "https://github.com/AlexAdasCca"
   },
   {
     "name": "BiliBili",
     "icon": "/images/icon/bilibili.png",
     "tip": "(゜-゜)つロ 干杯 ~",
-    "url": "https://space.bilibili.com/98544142"
+    "url": "https://space.bilibili.com/1270641296"
   },
   {
     "name": "QQ",
     "icon": "/images/icon/qq.png",
-    "tip": "有什么事吗",
-    "url": "https://res.abeim.cn/api/qq/?qq=1539250352"
+    "tip": "加群聊天",
+    "url": "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=-Brf9eAxlYB4BmcdU-vXxKEqreK6aHdr&authKey=scLn45liYJlD%2FqiJFy6cZlwRo7cjqbFsh9Y3M9No2onH7hUI1s5P%2BfaIUrrb%2Ff5I&noverify=0&group_code=619283285"
   },
   {
     "name": "Email",
     "icon": "/images/icon/email.png",
     "tip": "来封 Email ~",
-    "url": "mailto:one@imsyy.top"
+    "url": "mailto:one@nekoly.xyz"
   },
   {
     "name": "Twitter",
     "icon": "/images/icon/twitter.png",
     "tip": "你懂的 ~",
-    "url": "https://twitter.com/iimmsyy"
+    "url": ""
   },
   {
     "name": "Telegram",
     "icon": "/images/icon/telegram.png",
-    "tip": "你懂的 ~",
-    "url": "https://t.me/bottom_user"
+    "tip": "DC群聊",
+    "url": ""
   }
 ]
