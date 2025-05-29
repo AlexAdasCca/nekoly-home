@@ -49,10 +49,19 @@ const getTemperature = (min, max) => {
 // 获取后端天气数据
 const getWeatherData = async () => {
   try {
-    const apiKey = import.meta.env.VITE_WEATHER_KEY;
+    // 生成安全令牌 - 使用FingerprintJS专业指纹
+    const utcMinutes = Math.floor(Date.now() / 60000);
+    const fpPromise = import('@fingerprintjs/fingerprintjs')
+      .then(FingerprintJS => FingerprintJS.load());
+    const fp = await fpPromise;
+    const result = await fp.get();
+    const visitorId = result.visitorId;
+    const authToken = btoa(`${utcMinutes}:${visitorId}`).slice(0, 32);
+    
     const headers = new Headers({
       'Content-Type': 'application/json',
-      'x-api-key': apiKey
+      'x-auth-token': authToken,
+      'x-utc-minutes': utcMinutes
     });
 
     const apiBase = import.meta.env.VITE_API_BASE || '';
@@ -70,13 +79,13 @@ const getWeatherData = async () => {
     // 获取天气信息
     const weatherRes = await fetch(`${apiBase}/api/weather/info?city=${adCode.adcode}`, { headers });
     if (!weatherRes.ok) throw "天气查询失败";
-    const result = await weatherRes.json();
+    const wh_result = await weatherRes.json();
     
     weatherData.weather = {
-      weather: result.lives[0].weather,
-      temperature: result.lives[0].temperature,
-      winddirection: result.lives[0].winddirection,
-      windpower: result.lives[0].windpower,
+      weather: wh_result.lives[0].weather,
+      temperature: wh_result.lives[0].temperature,
+      winddirection: wh_result.lives[0].winddirection,
+      windpower: wh_result.lives[0].windpower,
     };
   } catch (error) {
     console.error("天气信息获取失败:" + error);

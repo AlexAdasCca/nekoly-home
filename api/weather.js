@@ -1,12 +1,35 @@
 import fetch from 'node-fetch'
 
-// 简单的API密钥验证
-const validateApiKey = (headers) => {
-  const apiKey = headers['x-api-key']
-  console.log('Received API Key:', apiKey)
-  console.log('Expected API Key:', process.env.INTERNAL_API_KEY)
-  console.log('Headers:', headers)
-  return apiKey === process.env.INTERNAL_API_KEY
+// 验证请求有效性
+const validateRequest = (headers) => {
+  try {
+    const token = headers['x-auth-token']
+    const clientTime = headers['x-utc-minutes']
+    
+    // 验证时间戳(允许±5分钟误差)
+    const serverTime = Math.floor(Date.now() / 60000)
+    if (Math.abs(serverTime - clientTime) > 5) {
+      console.log('时间验证失败: 客户端', clientTime, '服务端', serverTime)
+      return false
+    }
+
+    // 验证令牌格式 (仅验证时间戳部分)
+    try {
+      const [timestamp] = atob(token).split(':')
+      if (parseInt(timestamp) !== clientTime) {
+        console.log('时间戳不匹配')
+        return false
+      }
+    } catch (error) {
+      console.log('令牌解析失败:', error)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error('验证过程中出错:', error)
+    return false
+  }
 }
 
 export default async (req, res) => {
@@ -18,7 +41,7 @@ export default async (req, res) => {
     const path = req.url.split('?')[0]
     
     if (path === '/api/weather/location') {
-      if (!validateApiKey(req.headers)) {
+      if (!validateRequest(req.headers)) {
         return res.status(401).json({ error: 'Unauthorized' })
       }
       
@@ -28,7 +51,7 @@ export default async (req, res) => {
     }
     
     if (path === '/api/weather/info') {
-      if (!validateApiKey(req.headers)) {
+      if (!validateRequest(req.headers)) {
         return res.status(401).json({ error: 'Unauthorized' })
       }
       
