@@ -48,6 +48,9 @@ import { mainStore } from "@/store";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Mousewheel } from "swiper/modules";
 import siteLinks from "@/assets/siteLinks.json";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const store = mainStore();
 
@@ -74,6 +77,18 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data) => {
+  if (!data.link || data.link.trim() === "") {
+    window.location.href = '/404.html';
+    return;
+  }
+
+  try {
+    new URL(data.link);
+  } catch (e) {
+    window.location.href = '/404.html';
+    return;
+  }
+
   if (data.name === "音乐" && store.musicClick) {
     if (typeof $openList === "function") $openList();
   } else {

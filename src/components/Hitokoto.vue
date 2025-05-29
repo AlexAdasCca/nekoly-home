@@ -29,7 +29,8 @@
 
 <script setup>
 import { MusicMenu, Error } from "@icon-park/vue-next";
-import { getHitokoto } from "@/api";
+import { getHitokoto, getBackupHitokoto } from "@/api";
+import hitokotoFallback from "@/assets/hitokotoFallback.json";
 import { mainStore } from "@/store";
 import debounce from "@/utils/debounce.js";
 
@@ -40,27 +41,49 @@ const openMusicShow = ref(false);
 
 // 一言数据
 const hitokotoData = reactive({
-  text: "这里应该显示一句话",
-  from: "無名",
+  text: "一言内容",
+  from: "一言来源",
 });
+
+// 获取随机本地一言
+const getRandomFallbackHitokoto = () => {
+  const randomIndex = Math.floor(Math.random() * hitokotoFallback.length);
+  return hitokotoFallback[randomIndex];
+};
 
 // 获取一言数据
 const getHitokotoData = async () => {
   try {
+    // 尝试主API
     const result = await getHitokoto();
     hitokotoData.text = result.hitokoto;
     hitokotoData.from = result.from;
+    return; // 成功则直接返回
   } catch (error) {
-    ElMessage({
-      message: "一言获取失败",
-      icon: h(Error, {
-        theme: "filled",
-        fill: "#efefef",
-      }),
-    });
-    hitokotoData.text = "这里应该显示一句话";
-    hitokotoData.from = "無名";
+    console.error('主API获取失败:', error);
   }
+
+  try {
+    // 主API失败，尝试备用API
+    const backupResult = await getBackupHitokoto();
+    hitokotoData.text = backupResult.hitokoto;
+    hitokotoData.from = backupResult.from;
+    return; // 成功则直接返回
+  } catch (error) {
+    console.error('备用API获取失败:', error);
+  }
+
+  // 所有API都失败，使用本地回退
+  ElMessage({
+    message: "一言API获取失败，使用本地数据",
+    icon: h(Error, {
+      theme: "filled",
+      fill: "#efefef",
+    }),
+  });
+  const fallback = getRandomFallbackHitokoto();
+  hitokotoData.text = fallback.text;
+  hitokotoData.from = fallback.from;
 };
 
 // 更新一言数据

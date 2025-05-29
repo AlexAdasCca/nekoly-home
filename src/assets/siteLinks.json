@@ -7,31 +7,31 @@
   {
     "icon": "Cloud",
     "name": "网盘",
-    "link": "https://pan.nekoly.xyz/"
+    "link": "https://ipan.nekoly.xyz/"
   },
   {
     "icon": "CompactDisc",
     "name": "音乐",
-    "link": "https://www.nekoly.xyz/"
+    "link": "https://music.nekoly.xyz/"
   },
   {
     "icon": "Compass",
-    "name": "起始页",
-    "link": "https://nav.nekoly.xyz/"
+    "name": "网址导航",
+    "link": "https://web.nekoly.xyz/"
   },
   {
     "icon": "Book",
-    "name": "收藏集",
-    "link": "https://web.nekoly.xyz/"
+    "name": "灵感草稿",
+    "link": "https://stackedit.io/app#"
   },
   {
     "icon": "Fire",
     "name": "今日热榜",
-    "link": "https://hot.imsyy.top/"
+    "link": ""
   },
   {
     "icon": "LaptopCode",
     "name": "站点监测",
-    "link": "https://status.nekoly.xyz/"
+    "link": ""
   }
 ]

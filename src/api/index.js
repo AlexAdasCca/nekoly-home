@@ -45,8 +45,48 @@ export const getPlayerList = async (server, type, id) => {
 
 // 获取一言数据
 export const getHitokoto = async () => {
-  const res = await fetch("https://v1.hitokoto.cn");
-  return await res.json();
+  try {
+    const res = await fetchJsonp("https://v1.hitokoto.cn?encode=json");
+    const data = await res.json();
+    if (!data || !data.hitokoto) {
+      throw new Error("Invalid response from hitokoto API");
+    }
+    return data;
+  } catch (error) {
+    throw error; // 重新抛出错误以便上层捕获
+  }
+};
+
+// 获取备用一言数据
+export const getBackupHitokoto = async () => {
+  try {
+    // 先尝试直接fetch
+    const res = await fetch("https://api.xygeng.cn/one");
+    if (!res.ok) throw new Error("Fetch failed");
+    const data = await res.json();
+    if (!data || !data.data) {
+      throw new Error("Invalid response from backup API");
+    }
+    return {
+      hitokoto: data.data.content,
+      from: data.data.origin
+    };
+  } catch (error) {
+    try {
+      // 如果直接fetch失败，尝试JSONP
+      const res = await fetchJsonp("https://api.xygeng.cn/one");
+      const data = await res.json();
+      if (!data || !data.data) {
+        throw new Error("Invalid JSONP response from backup API");
+      }
+      return {
+        hitokoto: data.data.content,
+        from: data.data.origin
+      };
+    } catch (jsonpError) {
+      throw jsonpError; // 重新抛出错误以便上层捕获
+    }
+  }
 };
 
 /**
