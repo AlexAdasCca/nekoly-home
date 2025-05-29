@@ -50,7 +50,9 @@ const getTemperature = (min, max) => {
 const getWeatherData = async () => {
   try {
     // 生成安全令牌 - 使用FingerprintJS专业指纹
-    const utcMinutes = Math.floor(Date.now() / 60000);
+    // 使用明确的UTC时间戳
+    const utcMinutes = Math.floor(new Date().getTime() / 60000);
+    console.log('生成令牌时间戳(UTC分钟):', utcMinutes);
     const fpPromise = import('@fingerprintjs/fingerprintjs')
       .then(FingerprintJS => FingerprintJS.load());
     const fp = await fpPromise;

@@ -4,27 +4,29 @@ import fetch from 'node-fetch'
 const validateRequest = (headers) => {
   try {
     const token = headers['x-auth-token']
-    const clientTime = headers['x-utc-minutes']
+    const clientTime = parseInt(headers['x-utc-minutes'])
+    
+    // 使用明确的UTC时间戳
+    const serverTime = Math.floor(new Date().getTime() / 60000)
+    console.log('时间验证 - 客户端:', clientTime, '服务端:', serverTime)
     
     // 验证时间戳(允许±5分钟误差)
-    const serverTime = Math.floor(Date.now() / 60000)
     if (Math.abs(serverTime - clientTime) > 5) {
-      console.log('时间验证失败: 客户端', clientTime, '服务端', serverTime)
+      console.log('时间验证失败: 差异', Math.abs(serverTime - clientTime), '分钟')
       return false
     }
 
-    // 验证令牌格式 (仅验证时间戳部分)
+    // 验证令牌格式
     try {
-      // 兼容前端encodeURIComponent编码
-      const decoded = decodeURIComponent(atob(token));
-      const [timestamp] = decoded.split(':');
+      const decoded = decodeURIComponent(atob(token))
+      const [timestamp] = decoded.split(':')
       if (parseInt(timestamp) !== clientTime) {
-        console.log('时间戳不匹配');
-        return false;
+        console.log('令牌时间戳不匹配')
+        return false
       }
     } catch (error) {
-      console.log('令牌解析失败:', error);
-      return false;
+      console.log('令牌解析失败:', error)
+      return false
     }
 
     return true
