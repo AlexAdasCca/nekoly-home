@@ -46,8 +46,18 @@ export const getPlayerList = async (server, type, id) => {
 // 获取一言数据
 export const getHitokoto = async () => {
   try {
-    const res = await fetchJsonp("https://v1.hitokoto.cn?encode=json");
-    const data = await res.json();
+    const response = await fetch("https://v1.hitokoto.cn?encode=json");
+    const text = await response.text();
+    
+    // 处理JSONP响应
+    let jsonStr = text;
+    if (text.startsWith(';jsonp_')) {
+      const start = text.indexOf('(') + 1;
+      const end = text.lastIndexOf(')');
+      jsonStr = text.slice(start, end);
+    }
+    
+    const data = JSON.parse(jsonStr);
     if (!data || !data.hitokoto) {
       throw new Error("Invalid response from hitokoto API");
     }
