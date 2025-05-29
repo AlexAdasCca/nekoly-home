@@ -1,0 +1,14 @@
+{
+  "learningItems": [
+    { "date": "05/25", "topic": "Vue 3 组合式API", "progress": 90 },
+    { "date": "05/20", "topic": "TypeScript 高级类型", "progress": 75 },
+    { "date": "05/15", "topic": "Rust 所有权系统", "progress": 60 },
+    { "date": "05/10", "topic": "WebAssembly 基础", "progress": 40 }
+  ],
+  "milestones": [
+    { "date": "2025-04-01", "event": "完成博客系统重构" },
+    { "date": "2025-03-15", "event": "学习Web3开发" },
+    { "date": "2025-02-10", "event": "发布首个开源项目" },
+    { "date": "2025-01-05", "event": "掌握微前端架构" }
+  ]
+}
