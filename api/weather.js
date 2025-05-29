@@ -15,14 +15,16 @@ const validateRequest = (headers) => {
 
     // 验证令牌格式 (仅验证时间戳部分)
     try {
-      const [timestamp] = atob(token).split(':')
+      // 兼容前端encodeURIComponent编码
+      const decoded = decodeURIComponent(atob(token));
+      const [timestamp] = decoded.split(':');
       if (parseInt(timestamp) !== clientTime) {
-        console.log('时间戳不匹配')
-        return false
+        console.log('时间戳不匹配');
+        return false;
       }
     } catch (error) {
-      console.log('令牌解析失败:', error)
-      return false
+      console.log('令牌解析失败:', error);
+      return false;
     }
 
     return true

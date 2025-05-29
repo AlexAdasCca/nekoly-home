@@ -56,7 +56,9 @@ const getWeatherData = async () => {
     const fp = await fpPromise;
     const result = await fp.get();
     const visitorId = result.visitorId;
-    const authToken = btoa(`${utcMinutes}:${visitorId}`).slice(0, 32);
+    // 使用兼容浏览器的Base64编码
+    const tokenStr = encodeURIComponent(`${utcMinutes}:${visitorId}`);
+    const authToken = btoa(tokenStr).slice(0, 32);
     
     const headers = new Headers({
       'Content-Type': 'application/json',
