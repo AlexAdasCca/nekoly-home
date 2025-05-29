@@ -78,14 +78,14 @@ const siteIcon = {
 // 链接跳转
 const jumpLink = (data) => {
   if (!data.link || data.link.trim() === "") {
-    window.location.href = '/404.html';
+    window.location.href = '/404';
     return;
   }
 
   try {
     new URL(data.link);
   } catch (e) {
-    window.location.href = '/404.html';
+    window.location.href = '/404';
     return;
   }
 
