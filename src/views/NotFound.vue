@@ -4,7 +4,7 @@
       <h1>404</h1>
       <p>前面的区域，以后再来探索吧~</p>
       <img 
-        src="../public/images/background1.jpg" 
+        src="/images/background1.jpg" 
         alt="404 image"
         class="not-found-image"
       />
