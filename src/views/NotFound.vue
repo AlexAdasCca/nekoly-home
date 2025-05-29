@@ -1,8 +1,14 @@
 <template>
   <div class="not-found">
+    <!-- 固定背景层 - 使用与动态背景相同的图片 -->
+    <div 
+      class="fixed-background"
+      :style="{ backgroundImage: 'url(' + randomBgImage + ')' }"
+    ></div>
+    
     <!-- 背景图片 -->
     <img 
-      src="/images/background8.jpg" 
+      :src="randomBgImage"
       alt="404 background"
       class="background-image"
       @load="imageLoaded = true"
@@ -24,7 +30,7 @@
       }"
     >
       <h1>404</h1>
-      <p>前面的区域，下次再来探索哦~</p>
+      <p>前面的区域，以后再来探索吧~</p>
       <div class="arrow">↓</div>
       <button @click="goHome" class="home-button">返回主页</button>
     </div>
@@ -38,6 +44,23 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const router = useRouter()
 const mouseX = ref(0)
 const mouseY = ref(0)
+const imageLoaded = ref(false)
+const imageError = ref(false)
+
+// 404背景图片列表
+const bgImages = [
+  '/images/404/404-background-1.jpg',
+  '/images/404/404-background-2.jpg',
+  '/images/404/404-background-3.jpg',
+  '/images/404/404-background-4.jpg',
+  '/images/404/404-background-5.jpg',
+  '/images/404/404-background-6.jpg',
+  '/images/404/404-background-7.jpg',
+  '/images/404/404-background-8.jpg'
+]
+
+// 随机选择背景图片
+const randomBgImage = ref(bgImages[Math.floor(Math.random() * bgImages.length)])
 
 const goHome = () => {
   // 强制刷新页面以确保正确加载主应用
@@ -49,9 +72,10 @@ const handleMouseMove = (e) => {
   const mouseXPercent = (e.clientX / window.innerWidth) - 0.5
   const mouseYPercent = (e.clientY / window.innerHeight) - 0.5
   
-  // 视差效果 - 背景反向轻微移动 (5%)
-  const bgX = -mouseXPercent * 50
-  const bgY = -mouseYPercent * 50
+  // 视差效果 - 背景反向轻微移动 (5%)，限制移动范围
+  const maxOffset = 8 // 最大偏移量
+  const bgX = -mouseXPercent * 20 // 移动幅度
+  const bgY = -mouseYPercent * 20
   
   // 悬浮框跟随移动 (10%)
   const boxX = mouseXPercent * 100
@@ -95,21 +119,50 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
+.not-found::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+    url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.2"/></svg>');
+  z-index: 0;
+}
+
+.fixed-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+  filter: blur(2px);
+}
+
 .background-image {
   position: absolute;
-  width: 110%; /* 扩大背景防止移动时露出边缘 */
-  height: 110%;
+  width: 120%;
+  height: 120%;
   object-fit: cover;
   z-index: 0;
   transition: transform 0.5s ease-out;
   transform-origin: center;
+  transform: translate(-10%, -10%);
+  -webkit-mask-image: radial-gradient(circle, white 80%, transparent 100%);
+  mask-image: radial-gradient(circle, white 80%, transparent 100%);
 }
 
 .floating-box {
   position: absolute;
   width: 300px;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);

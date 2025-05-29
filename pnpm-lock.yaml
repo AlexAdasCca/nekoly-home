@@ -51,6 +51,9 @@ importers:
       '@vicons/fa':
         specifier: ^0.12.0
         version: 0.12.0
+      '@vicons/tabler':
+        specifier: ^0.12.0
+        version: 0.12.0
       '@vicons/utils':
         specifier: ^0.1.4
         version: 0.1.4(vue@3.4.24)
@@ -988,6 +991,9 @@ packages:
 
   '@vicons/fa@0.12.0':
     resolution: {integrity: sha512-g2PIeJLsTHUjt6bK63LxqC0uYQB7iu+xViJOxvp1s8b9/akpXVPVWjDTTsP980/0KYyMMe4U7F/aUo7wY+MsXA==}
+
+  '@vicons/tabler@0.12.0':
+    resolution: {integrity: sha512-3+wUFuxb7e8OzZ8Wryct1pzfA2vyoF4lwW98O9s27ZrfCGaJGNmqG+q8A7vQ92Mf+COCgxpK+rhNPTtTvaU6qw==}
 
   '@vicons/utils@0.1.4':
     resolution: {integrity: sha512-OHI19qVNN6i+uPQ+Y3f2s0dUxwsYnOCcKBW7XOU4yXXO1aU3ZoKpblCc3+4N0qmgoJs5rWKRAaMisipqEXJwAg==}
@@ -3431,6 +3437,8 @@ snapshots:
   '@ungap/structured-clone@1.2.0': {}
 
   '@vicons/fa@0.12.0': {}
+
+  '@vicons/tabler@0.12.0': {}
 
   '@vicons/utils@0.1.4(vue@3.4.24)':
     dependencies:
