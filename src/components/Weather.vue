@@ -50,10 +50,10 @@ const getTemperature = (min, max) => {
 const getWeatherData = async () => {
   try {
     const apiKey = import.meta.env.VITE_WEATHER_KEY;
-    const headers = {
+    const headers = new Headers({
       'Content-Type': 'application/json',
       'x-api-key': apiKey
-    };
+    });
 
     const apiBase = import.meta.env.VITE_API_BASE || '';
     

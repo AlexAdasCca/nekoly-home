@@ -3,6 +3,9 @@ import fetch from 'node-fetch'
 // 简单的API密钥验证
 const validateApiKey = (headers) => {
   const apiKey = headers['x-api-key']
+  console.log('Received API Key:', apiKey)
+  console.log('Expected API Key:', process.env.INTERNAL_API_KEY)
+  console.log('Headers:', headers)
   return apiKey === process.env.INTERNAL_API_KEY
 }
 
