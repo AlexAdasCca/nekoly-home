@@ -18,7 +18,40 @@
 </template>
 
 <script setup>
+import { getAdcode, getWeather, getOtherWeather } from "@/api";
 import { Error } from "@icon-park/vue-next";
+import { decrypt, generateRandomKey } from "@/utils/crypto";
+
+// 加密配置
+const encryptionKey = import.meta.env.VITE_ENCRYPTION_KEY;
+const encryptionIv = import.meta.env.VITE_ENCRYPTION_IV;
+const encryptedApiKey = import.meta.env.VITE_WEATHER_ENCRYPTED_KEY;
+
+// 动态API密钥
+const dynamicApiKey = ref('');
+const keyRotationInterval = ref(null);
+
+// 初始化动态密钥
+const initDynamicKey = () => {
+  try {
+    // 解密初始API密钥
+    if (encryptedApiKey) {
+      dynamicApiKey.value = decrypt(encryptedApiKey, encryptionKey, encryptionIv);
+    }
+    
+    // 设置定时轮换密钥 (30-60分钟随机间隔)
+    const rotationTime = Math.floor(Math.random() * 30 + 30) * 60 * 1000;
+    keyRotationInterval.value = setInterval(() => {
+      dynamicApiKey.value = generateRandomKey(32);
+      console.log('API Key rotated:', dynamicApiKey.value);
+    }, rotationTime);
+  } catch (error) {
+    console.error('Failed to initialize dynamic API key:', error);
+  }
+};
+
+// 高德开发者 Key (保留原变量名兼容现有代码)
+const mainKey = dynamicApiKey;
 
 // 天气数据
 const weatherData = reactive({
@@ -46,51 +79,45 @@ const getTemperature = (min, max) => {
   }
 };
 
-// 获取后端天气数据
+// 获取天气数据
 const getWeatherData = async () => {
   try {
-    // 生成安全令牌 - 使用FingerprintJS专业指纹
-    // 使用明确的UTC时间戳
-    const utcMinutes = Math.floor(new Date().getTime() / 60000);
-    console.log('生成令牌时间戳(UTC分钟):', utcMinutes);
-    const fpPromise = import('@fingerprintjs/fingerprintjs')
-      .then(FingerprintJS => FingerprintJS.load());
-    const fp = await fpPromise;
-    const result = await fp.get();
-    const visitorId = result.visitorId;
-    // 使用兼容浏览器的Base64编码
-    const tokenStr = encodeURIComponent(`${utcMinutes}:${visitorId}`);
-    const authToken = btoa(tokenStr).slice(0, 32);
-    
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      'x-auth-token': authToken,
-      'x-utc-minutes': utcMinutes
-    });
-
-    const apiBase = import.meta.env.VITE_API_BASE || '';
-    
-    // 获取地理位置
-    const locationRes = await fetch(`${apiBase}/api/weather/location`, { headers });
-    if (!locationRes.ok) throw "地区查询失败";
-    const adCode = await locationRes.json();
-    
-    weatherData.adCode = {
-      city: adCode.city,
-      adcode: adCode.adcode,
-    };
-
-    // 获取天气信息
-    const weatherRes = await fetch(`${apiBase}/api/weather/info?city=${adCode.adcode}`, { headers });
-    if (!weatherRes.ok) throw "天气查询失败";
-    const wh_result = await weatherRes.json();
-    
-    weatherData.weather = {
-      weather: wh_result.lives[0].weather,
-      temperature: wh_result.lives[0].temperature,
-      winddirection: wh_result.lives[0].winddirection,
-      windpower: wh_result.lives[0].windpower,
-    };
+    // 获取地理位置信息
+    if (!mainKey.value) {
+      console.log("未配置，使用备用天气接口");
+      const result = await getOtherWeather();
+      console.log(result);
+      const data = result.result;
+      weatherData.adCode = {
+        city: data.city.City || "未知地区",
+        // adcode: data.city.cityId,
+      };
+      weatherData.weather = {
+        weather: data.condition.day_weather,
+        temperature: getTemperature(data.condition.min_degree, data.condition.max_degree),
+        winddirection: data.condition.day_wind_direction,
+        windpower: data.condition.day_wind_power,
+      };
+    } else {
+      // 获取 Adcode
+      const adCode = await getAdcode(mainKey.value);
+      console.log(adCode);
+      if (adCode.infocode !== "10000") {
+        throw "地区查询失败";
+      }
+      weatherData.adCode = {
+        city: adCode.city,
+        adcode: adCode.adcode,
+      };
+      // 获取天气信息
+      const result = await getWeather(mainKey.value, weatherData.adCode.adcode);
+      weatherData.weather = {
+        weather: result.lives[0].weather,
+        temperature: result.lives[0].temperature,
+        winddirection: result.lives[0].winddirection,
+        windpower: result.lives[0].windpower,
+      };
+    }
   } catch (error) {
     console.error("天气信息获取失败:" + error);
     onError("天气信息获取失败");
@@ -110,7 +137,16 @@ const onError = (message) => {
 };
 
 onMounted(() => {
+  // 初始化动态密钥
+  initDynamicKey();
   // 调用获取天气
   getWeatherData();
+});
+
+onUnmounted(() => {
+  // 清除定时器
+  if (keyRotationInterval.value) {
+    clearInterval(keyRotationInterval.value);
+  }
 });
 </script>

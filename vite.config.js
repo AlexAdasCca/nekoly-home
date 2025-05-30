@@ -7,6 +7,7 @@ import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import viteCompression from "vite-plugin-compression";
+import vitePluginBundleObfuscator from "vite-plugin-bundle-obfuscator";
 
 // https://vitejs.dev/config/
 export default ({ mode }) =>
@@ -90,7 +91,46 @@ export default ({ mode }) =>
         },
       }),
       viteCompression(),
+      vitePluginBundleObfuscator({
+        excludes: [],
+        enable: true,
+        log: true,
+        autoExcludeNodeModules: false,
+        threadPool: false,
+        options: {
+          compact: true,
+          controlFlowFlattening: true,
+          controlFlowFlatteningThreshold: 1,
+          deadCodeInjection: false,
+          debugProtection: true,
+          debugProtectionInterval: 0,
+          disableConsoleOutput: false,
+          identifierNamesGenerator: "hexadecimal",
+          log: false,
+          numbersToExpressions: false,
+          renameGlobals: false,
+          selfDefending: true,
+          simplify: true,
+          splitStrings: false,
+          stringArray: true,
+          stringArrayCallsTransform: true,
+          stringArrayCallsTransformThreshold: 0.5,
+          stringArrayEncoding: [],
+          stringArrayIndexShift: true,
+          stringArrayRotate: true,
+          stringArrayShuffle: true,
+          stringArrayWrappersCount: 1,
+          stringArrayWrappersChainedCalls: true,
+          stringArrayWrappersParametersMaxCount: 2,
+          stringArrayWrappersType: "variable",
+          stringArrayThreshold: 0.75,
+          unicodeEscapeSequence: false,
+        },
+      }),
     ],
+    esbuild: {
+      drop: ["console", "debugger"]
+    },
     server: {
       port: "3000",
       open: true,
@@ -113,12 +153,7 @@ export default ({ mode }) =>
       },
     },
     build: {
-      minify: "terser",
-      terserOptions: {
-        compress: {
-          pure_funcs: ["console.log"],
-        },
-      },
+      minify: "esbuild",
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),

@@ -2,10 +2,6 @@
   "version": 2,
   "routes": [
     {
-      "src": "/api/weather/(.*)",
-      "dest": "/api/weather.js"
-    },
-    {
       "src": "/images/(.*)",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
