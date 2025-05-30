@@ -25,6 +25,8 @@
       >
         <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
       </Icon>
+      <!-- 公告栏 -->
+      <Announcement />
       <!-- 页脚 -->
       <Transition name="fade" mode="out-in">
         <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
@@ -45,6 +47,7 @@ import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
+import Announcement from "@/components/Announcement.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 
