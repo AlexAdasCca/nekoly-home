@@ -90,9 +90,6 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
-      rollup-obfuscator:
-        specifier: ^4.1.1
-        version: 4.1.1(javascript-obfuscator@4.1.1)(rollup@3.29.4)
       sass:
         specifier: ^1.75.0
         version: 1.75.0
@@ -2411,11 +2408,6 @@ packages:
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
     hasBin: true
-
-  rollup-obfuscator@4.1.1:
-    resolution: {integrity: sha512-eAZtlFEc8gTASEJjpWrjRrRaIMC42xNaMyRbNB95QozPKUmittoGS/Q+wYtZsqvT4N75mtHkFmzsgfFpOwpkUA==}
-    peerDependencies:
-      javascript-obfuscator: ^4.0.0
 
   rollup-plugin-terser@7.0.2:
     resolution: {integrity: sha512-w3iIaU4OxcF52UUXiZNsNeuXIMDvFrr+ZXK6bFZ0Q60qyVfq4uLptoS4bbq3paG3x216eQllFZX7zt6TIImguQ==}
@@ -5425,13 +5417,6 @@ snapshots:
   rimraf@3.0.2:
     dependencies:
       glob: 7.2.3
-
-  rollup-obfuscator@4.1.1(javascript-obfuscator@4.1.1)(rollup@3.29.4):
-    dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@3.29.4)
-      javascript-obfuscator: 4.1.1
-    transitivePeerDependencies:
-      - rollup
 
   rollup-plugin-terser@7.0.2(rollup@2.79.1):
     dependencies:
