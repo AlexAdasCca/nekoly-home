@@ -26,9 +26,10 @@ export default ({ mode }) =>
         workbox: {
           skipWaiting: true,
           clientsClaim: true,
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
           runtimeCaching: [
             {
-              urlPattern: /(.*?)\.(js|css|woff2|woff|ttf)/, // js / css 静态资源缓存
+          urlPattern: /\.(js|css|woff2|woff|ttf)$/, // js / css 静态资源缓存
               handler: "CacheFirst",
               options: {
                 cacheName: "js-css-cache",
@@ -154,6 +155,7 @@ export default ({ mode }) =>
     },
     build: {
       minify: "esbuild",
+      chunkSizeWarningLimit: 1500,
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
@@ -162,7 +164,13 @@ export default ({ mode }) =>
         output: {
           entryFileNames: `assets/[name].js`,
           chunkFileNames: `assets/[name].js`,
-          assetFileNames: `assets/[name].[ext]`
+          assetFileNames: `assets/[name].[ext]`,
+          manualChunks: {
+            vendor: ['vue', 'vue-router', 'pinia'],
+            elementPlus: ['element-plus'],
+            iconPark: ['@icon-park/vue-next'],
+            utils: ['axios', 'dayjs']
+          }
         }
       }
     },

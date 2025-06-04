@@ -1,11 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import App from '@/App.vue'
+import MainLayout from '@/layouts/MainLayout.vue'
+import MainLeft from '@/views/Main/Left.vue'
 import NotFound from '@/views/NotFound.vue'
+import Webmaster from '@/views/Webmaster/index.vue'
+import Status from '@/views/Status/index.vue'
 
 const routes = [
   {
     path: '/',
-    component: App
+    component: MainLayout,
+    children: [
+      {
+        path: '',
+        component: MainLeft
+      }
+    ]
+  },
+  {
+    path: '/webmaster',
+    component: Webmaster
+  },
+  {
+    path: '/status',
+    component: Status
   },
   {
     path: '/:pathMatch(.*)*',

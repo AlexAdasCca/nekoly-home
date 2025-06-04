@@ -18,15 +18,11 @@
       <div class="content-section">
         <ul class="learning-list">
           <li v-for="(item, index) in learningItems.slice(0, 3)" :key="index">
-            <span class="date">{{ item.date }}</span>
-            <span class="topic">{{ item.topic }}</span>
-            <span class="progress">
-              <el-progress 
-                :percentage="item.progress" 
-                :stroke-width="12" 
-                :show-text="false"
-              />
-            </span>
+            <div class="preview-row">
+              <span class="date">{{ item.date }}</span>
+              <span class="topic">{{ item.topic }}</span>
+              <span class="progress preview-text">{{ item.progress }}%</span>
+            </div>
           </li>
         </ul>
         <div class="ellipsis">...</div>
@@ -43,19 +39,23 @@
           <div class="modal-content">
             <div class="content-section">
               <h3>近期学习</h3>
-              <ul class="learning-list">
-                <li v-for="(item, index) in learningItems" :key="index">
-                  <span class="date">{{ item.date }}</span>
-                  <span class="topic">{{ item.topic }}</span>
-                  <span class="progress">
-                    <el-progress 
-                      :percentage="item.progress" 
-                      :stroke-width="12" 
-                      :show-text="false"
-                    />
-                  </span>
-                </li>
-              </ul>
+              <div class="learning-container">
+                <div v-for="(item, index) in learningItems" :key="index" class="learning-item">
+                  <div class="item-row">
+                    <span class="date">{{ item.date }}</span>
+                    <span class="topic">{{ item.topic }}</span>
+                    <div class="progress-container">
+                      <span class="progress-value">{{ item.progress }}%</span>
+                      <el-progress 
+                        :percentage="item.progress" 
+                        :stroke-width="12"
+                        :show-text="false"
+                        style="flex:1;min-width:60px"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="content-section">
@@ -66,7 +66,7 @@
                   :key="index"
                   :timestamp="milestone.date"
                 >
-                  {{ milestone.event }}
+                  <span style="color: white">{{ milestone.event }}</span>
                 </el-timeline-item>
               </el-timeline>
             </div>
@@ -94,6 +94,46 @@ const toggleExpand = () => {
 <style lang="scss" scoped>
 .more-content {
   width: 100%;
+  isolation: isolate;
+  
+  .preview-content {
+    contain: content;
+    width: 100%;
+    overflow: visible;
+    
+    .content-section {
+      width: 100%;
+      min-width: max-content;
+      
+      .learning-list {
+        width: 100%;
+        
+        li {
+          width: 100%;
+          
+          .preview-row {
+            display: grid;
+            grid-template-columns: 4rem minmax(0, 1fr) 4rem;
+            gap: 1rem;
+            min-width: 100%;
+            
+            > * {
+              min-width: 0;
+            }
+            
+            .date {
+              width: 4rem;
+              margin-right: 1rem;
+            }
+            
+            .topic {
+              padding: 0 0.5rem;
+            }
+          }
+        }
+      }
+    }
+  }
   
   .title {
     display: flex;
@@ -117,52 +157,21 @@ const toggleExpand = () => {
       
       &:hover {
         opacity: 1;
-    }
-  }
-
-  .preview-content {
-    .content-section {
-      margin-bottom: 1rem;
-      
-      .learning-list {
-        list-style: none;
-        padding: 0;
-        
-        li {
-          display: flex;
-          align-items: center;
-          margin-bottom: 0.8rem;
-          font-size: 0.9rem;
-          
-          .date {
-            width: 2.5rem;
-            opacity: 0.7;
-            font-size: 0.8rem;
-          }
-          
-          .topic {
-            flex: 1;
-            margin: 0 0.5rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          
-          .progress {
-            width: 6rem;
-          }
-        }
-      }
-
-      .ellipsis {
-        text-align: center;
-        font-size: 1.2rem;
-        color: rgba(255,255,255,0.6);
-        margin-top: 0.5rem;
       }
     }
   }
 }
+
+.preview-text {
+  min-width: 3.5rem;
+  text-align: right;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-left: auto;
 }
 
 .modal-overlay {
@@ -200,35 +209,52 @@ const toggleExpand = () => {
       color: var(--el-text-color-regular);
     }
 
-    .learning-list {
-      list-style: none;
-      padding: 0;
-      
-      li {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.8rem;
-        font-size: 0.9rem;
+      .learning-container {
+        width: 100%;
         
-        .date {
-          width: 2.5rem;
-          opacity: 0.7;
-          font-size: 0.8rem;
-        }
-        
-        .topic {
-          flex: 1;
-          margin: 0 0.5rem;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        
-        .progress {
-          width: 6rem;
+        .learning-item {
+          margin-bottom: 0.8rem;
+          
+          .item-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            
+            .date {
+              width: 2.5rem;
+              opacity: 0.7;
+              font-size: 0.8rem;
+              flex-shrink: 0;
+            }
+            
+            .topic {
+              flex: 1;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              min-width: 0;
+            }
+            
+            .progress-container {
+              display: flex;
+              align-items: center;
+              gap: 0.3rem;
+              width: 15rem;
+              flex-shrink: 0;
+              
+              .progress-value {
+                color: white;
+                width: 3rem;
+                text-align: right;
+              }
+              
+              .el-progress {
+                min-width: 6rem;
+              }
+            }
+          }
         }
       }
-    }
   }
 }
 

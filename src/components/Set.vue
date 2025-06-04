@@ -9,6 +9,15 @@
             <el-radio value="2" size="large" border>随机风景</el-radio>
             <el-radio value="3" size="large" border>随机动漫</el-radio>
           </el-radio-group>
+          <el-button 
+            class="update-btn" 
+            type="primary" 
+            size="small" 
+            @click="updateNow"
+            :disabled="isUpdating"
+          >
+            立即更新
+          </el-button>
         </div>
       </el-collapse-item>
       <el-collapse-item title="个性化调整" name="2">
@@ -87,7 +96,7 @@
 </template>
 
 <script setup>
-import { CheckSmall, CloseSmall, SuccessPicture } from "@icon-park/vue-next";
+import { CheckSmall, CloseSmall, SuccessPicture, Loading } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { storeToRefs } from "pinia";
 
@@ -106,6 +115,9 @@ const {
 // 默认选中项
 const activeName = ref("1");
 
+const lastUpdateTime = ref(0);
+const isUpdating = ref(false);
+
 // 壁纸切换
 const radioChange = () => {
   ElMessage({
@@ -116,6 +128,45 @@ const radioChange = () => {
     }),
   });
 };
+
+// 立即更新壁纸
+  const updateNow = () => {
+    const now = Date.now();
+    const cooldown = 5000; // 5秒冷却时间
+    
+    // 检查冷却状态
+    if (lastUpdateTime.value && now - lastUpdateTime.value < cooldown) {
+      const messages = [
+        "别急嘛~让壁纸喘口气",
+        "点太快啦，稍等片刻再试",
+        "壁纸正在赶来的路上，请耐心等待",
+        "休息5秒钟，马上回来",
+        "手速太快了，慢一点啦~"
+      ];
+      const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+      ElMessage({
+        message: randomMsg,
+        icon: h(Loading, {
+          theme: "filled",
+          fill: "#efefef",
+        }),
+      });
+      return;
+    }
+    
+    // 开始更新
+    isUpdating.value = true;
+    lastUpdateTime.value = now;
+    
+    // 触发壁纸更新
+    store.triggerBgUpdate();
+    radioChange();
+    
+    // 重置更新状态
+    setTimeout(() => {
+      isUpdating.value = false;
+    }, 1000);
+  };
 </script>
 
 <style lang="scss" scoped>
@@ -139,6 +190,31 @@ const radioChange = () => {
 
       .el-collapse-item__content {
         padding: 20px;
+        
+        .bg-set {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          
+          .update-btn {
+            align-self: flex-end;
+            background: #ffffff26;
+            border-color: transparent;
+            
+            &:hover {
+              background: #ffffff40;
+            }
+            
+            &:active {
+              background: #ffffff20;
+            }
+            
+            &.is-disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+          }
+        }
         .item {
           display: flex;
           align-items: center;

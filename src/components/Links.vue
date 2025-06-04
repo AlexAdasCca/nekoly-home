@@ -43,7 +43,7 @@
 <script setup>
 import { Icon } from "@vicons/utils";
 // 可前往 https://www.xicons.org 自行挑选并在此处引入
-import { Link, Blog, CompactDisc, Cloud, Compass, Book, Fire, LaptopCode } from "@vicons/fa"; // 注意使用正确的类别
+import { Link, Blog, CompactDisc, Cloud, Compass, Book, Fire, LaptopCode, Tools } from "@vicons/fa"; // 注意使用正确的类别
 import { AccessPoint } from "@vicons/tabler"; // 我的状态 icon
 import { mainStore } from "@/store";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -74,13 +74,26 @@ const siteIcon = {
   Book,
   Fire,
   LaptopCode,
-  AccessPoint
+  AccessPoint,
+  Tools
 };
 
 // 链接跳转
 const jumpLink = (data) => {
   if (!data.link || data.link.trim() === "") {
     window.location.href = '/404';
+    return;
+  }
+
+  // 处理内部路由
+  if (data.link.startsWith('/')) {
+    if (data.link === '/webmaster') {
+      // 特殊处理站长工具路由
+      router.push(data.link);
+      window.scrollTo(0, 0);
+    } else {
+      router.push(data.link);
+    }
     return;
   }
 

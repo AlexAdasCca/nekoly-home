@@ -4,8 +4,8 @@
   "github": "https://github.com/imsyy/home",
   "home": "https://www.nekoly.xyz",
   "private": true,
-  "version": "4.1.4",
-  "rebuild": "2025052906a",
+  "version": "4.1.4 (alpha 10)",
+  "rebuild": "202506050010a",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -16,7 +16,10 @@
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix"
   },
   "dependencies": {
+    "@tsparticles/slim": "^3.8.1",
+    "@tsparticles/vue3": "^3.0.1",
     "@types/marked": "^6.0.0",
+    "@vueuse/core": "^13.3.0",
     "@worstone/vue-aplayer": "^1.0.6",
     "aplayer": "^1.10.1",
     "axios": "^1.6.8",
@@ -33,6 +36,7 @@
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "swiper": "^11.1.1",
+    "tsparticles": "^3.8.1",
     "vue": "^3.4.24",
     "vue-router": "^4.5.1"
   },

@@ -25,6 +25,9 @@ export const mainStore = defineStore("main", {
       playerAutoplay: false, // 是否自动播放
       playerLoop: "all", // 循环播放 "all", "one", "none"
       playerOrder: "list", // 循环顺序 "list", "random"
+      authorStatus: "在线", // 作者状态
+      authorStatusMessage: "", // 状态详细信息
+      forceBgUpdate: false, // 强制更新壁纸标志
     };
   },
   getters: {
@@ -74,6 +77,15 @@ export const mainStore = defineStore("main", {
     setImgLoadStatus(value) {
       this.imgLoadStatus = value;
     },
+    // 更新作者状态
+    setAuthorStatus(status, message = "") {
+      this.authorStatus = status;
+      this.authorStatusMessage = message;
+    },
+    // 触发壁纸更新
+    triggerBgUpdate() {
+      this.forceBgUpdate = !this.forceBgUpdate;
+    },
   },
   persist: {
     key: "data",
@@ -88,6 +100,8 @@ export const mainStore = defineStore("main", {
       "playerAutoplay",
       "playerLoop",
       "playerOrder",
+      "authorStatus",
+      "authorStatusMessage",
     ],
   },
 });

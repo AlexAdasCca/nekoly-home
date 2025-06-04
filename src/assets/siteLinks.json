@@ -10,9 +10,9 @@
     "link": "https://ipan.nekoly.xyz/"
   },
   {
-    "icon": "AccessPoint",
+    "icon": "AccessPoint", 
     "name": "我的状态",
-    "link": "https://www.nekoly.xyz/status"
+    "link": "/status"
   },
   {
     "icon": "Compass",
@@ -30,8 +30,13 @@
     "link": ""
   },
   {
-    "icon": "LaptopCode",
+    "icon": "LaptopCode", 
     "name": "站点监测",
     "link": ""
+  },
+  {
+    "icon": "Tools",
+    "name": "站长工具",
+    "link": "/webmaster"
   }
 ]
