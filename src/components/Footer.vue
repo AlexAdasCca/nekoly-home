@@ -27,6 +27,12 @@
             {{ siteIcp }}
           </a>
         </span>
+        <span>
+          <a href="https://icp.gov.moe/?keyword=20250658" target="_blank">
+            萌ICP备20250658号
+          </a>
+          ·
+        </span>
       </div>
       <div v-else class="lrc">
         <Transition name="fade" mode="out-in">
