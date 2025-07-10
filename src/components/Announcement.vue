@@ -1,3 +1,67 @@
+<!--
+公告组件 (Announcement)
+
+功能概述：
+- 提供可拖拽的浮动公告按钮
+- 点击按钮展开公告面板
+- 支持分类查看公告（全部/新闻/更新/活动）
+- 公告详情支持Markdown格式渲染
+- 从远程API动态获取公告数据
+
+数据格式规范：
+
+1. 公告列表API (VITE_ANNOUNCEMENT_LIST_CODE 环境变量指定)
+   - 返回格式: Array<AnnouncementItem>
+   - AnnouncementItem 结构:
+     {
+       id: string       // 必填，文章唯一ID
+       title: string    // 必填，公告标题(不超过50字)
+       category?: string // 可选，分类标识(news|update|event)
+       date?: string    // 可选，发布日期(ISO格式: YYYY-MM-DD)
+       author?: string  // 可选，发布者(不超过20字)
+       content?: string // 可选，详情页Markdown内容
+     }
+
+2. 公告详情API规范
+   - 通过rlid访问: `https://textdb.online/{rlid}`
+   - 返回格式: 
+     {
+       "aid": "",       // 文章ID(可选)
+       "rlid": "",      // 文章唯一ID(必填)
+       "title": "",     // 标题(必填)
+       "content": "",   // 详细内容(必填)
+       "tags": [],      // 标签数组(可选)
+       "date": "",      // 发布日期(可选)
+       "author": ""     // 发布者(可选)
+     }
+
+3. Markdown内容格式要求:
+   - 支持标准Markdown语法
+   - 可包含标题(#)、列表(-/*)、链接、图片等
+   - 图片建议使用绝对URL
+   - 代码块使用```包裹
+   - 建议段落之间空一行
+
+4. 分类规范:
+   - news: 新闻公告(蓝色)
+   - update: 更新日志(黄色) 
+   - event: 活动公告(粉色)
+   - 未指定分类默认为news
+
+使用示例：
+1. 在.env文件中配置公告列表API代码:
+   VITE_ANNOUNCEMENT_LIST_CODE=your_list_code
+
+2. 在模板中使用:
+   <Announcement />
+
+样式定制：
+- 通过修改scoped样式可自定义:
+  - 浮动球体(.floating-ball)
+  - 公告面板(.announcement-content)
+  - 分类标签(.tag)
+  - 详情内容(.markdown-content)
+-->
 <template>
   <div 
     class="announcement-container"
@@ -50,6 +114,12 @@
               <span class="tag" :class="currentAnnouncement.category">{{ getCategoryName(currentAnnouncement.category) }}</span>
               <span class="date">{{ formatDate(currentAnnouncement.date) }}</span>
               <span class="author">{{ currentAnnouncement.author }}</span>
+              <!-- 公告文章标签 -->
+              <template v-if="currentAnnouncement.tags && currentAnnouncement.tags.length">
+                <span class="tags">
+                  <span v-for="tag in currentAnnouncement.tags" :key="tag" class="tag-label">#{{ tag }}</span>
+                </span>
+              </template>
             </div>
             <h2>{{ currentAnnouncement.title }}</h2>
           </div>
@@ -61,7 +131,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, computed, h, inject } from 'vue'
+import { ref, computed, h } from 'vue'
 import { marked } from 'marked'
 import { ElMessage } from 'element-plus'
 import { Error } from '@icon-park/vue-next'
@@ -104,7 +174,7 @@ export default {
       startPos.value = { x: clientX, y: clientY }
     }
 
-    const stopDrag = (e: MouseEvent | TouchEvent) => {
+    const stopDrag = (_e: MouseEvent | TouchEvent) => {
       if (!isDragging.value) return
 
       isDragging.value = false
@@ -134,22 +204,37 @@ export default {
       { id: 'event', name: '活动' }
     ]
     const activeTab = ref('all')
-    const announcementList = ref([])
-    const currentAnnouncement = ref(null)
+    interface AnnouncementItem {
+      id: string       // 列表项ID
+      aid?: string     // 文章ID
+      rlid?: string    // 详情查询ID
+      title: string
+      category?: string
+      date?: string
+      author?: string
+      summary?: string // 列表简介内容
+      content?: string // 详情完整内容
+      tags?: string[]  // 文章标签
+    }
+
+    const announcementList = ref<AnnouncementItem[]>([])
+    const currentAnnouncement = ref<AnnouncementItem | null>(null)
     const content = ref('')
-    const listCode = import.meta.env.VITE_ANNOUNCEMENT_LIST_CODE || 'ZJ1JSFg3kqGY5ibKcbjHd5ca'
+    const listCode = import.meta.env.VITE_ANNOUNCEMENT_LIST_CODE || ''
 
     const filteredAnnouncements = computed(() => {
       if (activeTab.value === 'all') return announcementList.value
       return announcementList.value.filter(item => item.category === activeTab.value)
     })
 
-    const getCategoryName = (category) => {
+    const getCategoryName = (category?: string) => {
+      if (!category) return '其他'
       const tab = tabs.find(t => t.id === category)
       return tab ? tab.name : '其他'
     }
 
-    const formatDate = (dateStr) => {
+    const formatDate = (dateStr?: string) => {
+      if (!dateStr) return ''
       const date = new Date(dateStr)
       return `${date.getMonth() + 1}月${date.getDate()}日`
     }
@@ -170,10 +255,6 @@ export default {
       content.value = ''
     }
 
-    const notify = inject('notify', (msg) => {
-      console.warn('Notification:', msg.message)
-    })
-
      /**
      * 获取公告列表
      * 数据格式示例:
@@ -192,36 +273,53 @@ export default {
     const fetchAnnouncementList = async () => {
       try {
         const response = await fetch(`https://textdb.online/${listCode}`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
         const data = await response.json()
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid data format from API')
+        }
         announcementList.value = data.map(item => ({
           id: item.id,
+          rlid: item.rlid, // 保存详情查询ID
           title: item.title,
           category: item.category || 'news',
           date: item.date || new Date().toISOString().split('T')[0],
-          author: item.author || '管理员'
+          author: item.author || '管理员',
+          summary: item.content // 列表简介内容
         }))
       } catch (error) {
         console.error('获取公告列表失败:', error)
         ElMessage({
-          message: '获取公告列表失败，请稍后再试',
+          message: `获取公告列表失败: ${error.message}`,
           grouping: true,
           icon: h(Error, {
             theme: "filled",
             fill: "#efefef",
           }),
         })
+        // 设置空数组避免UI错误
+        announcementList.value = []
       }
     }
 
-    const fetchAnnouncementDetail = async (id) => {
+    const fetchAnnouncementDetail = async (rlid: string) => {
       try {
-        const response = await fetch(`https://textdb.online/${id}`)
+        const response = await fetch(`https://textdb.online/${rlid}`)
         const data = await response.json()
+        if (!data.rlid) throw new Error('Invalid response format')
+        
         currentAnnouncement.value = {
-          id: data.id,
-          title: data.title
+          id: data.rlid, // 使用rlid作为主ID
+          aid: data.aid,
+          rlid: data.rlid,
+          title: data.title,
+          date: data.date,
+          author: data.author,
+          tags: data.tags
         }
-        content.value = data.content
+        content.value = data.content // 详情内容
       } catch (error) {
         console.error('获取公告详情失败:', error)
         ElMessage({
@@ -251,7 +349,7 @@ export default {
       startDrag,
       getCategoryName,
       formatDate,
-      handleBallClick  // <-- 新增绑定
+      handleBallClick
     }
   }
 }
@@ -400,6 +498,15 @@ export default {
 .tag.event {
   background: rgba(233, 30, 99, 0.2);
   color: #e91e63;
+}
+
+.tag-label {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #eee;
+  margin-left: 5px;
 }
 
 .date {

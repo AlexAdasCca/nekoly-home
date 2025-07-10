@@ -27,9 +27,18 @@
               :style="index < 3 ? 'margin-bottom: 20px' : null"
               @click="jumpLink(item)"
             >
-              <Icon size="26">
-                <component :is="siteIcon[item.icon]" />
-              </Icon>
+              <template v-if="isComponentIcon(item.icon)">
+                <Icon size="26">
+                  <component :is="siteIcon[item.icon]" />
+                </Icon>
+              </template>
+              <template v-else>
+                <img 
+                  :src="getIconPath(item.icon)" 
+                  alt="icon"
+                  style="width: 26px; height: 26px; object-fit: contain;"
+                />
+              </template>
               <span class="name text-hidden">{{ item.name }}</span>
             </div>
           </el-col>
@@ -55,7 +64,7 @@ const router = useRouter();
 
 const store = mainStore();
 
-// 计算网站链接
+// 网站链接
 const siteLinksList = computed(() => {
   const result = [];
   for (let i = 0; i < siteLinks.length; i += 6) {
@@ -78,6 +87,21 @@ const siteIcon = {
   Tools
 };
 
+// 判断是否是组件图标
+const isComponentIcon = (icon) => {
+  return Object.keys(siteIcon).includes(icon);
+};
+
+// 获取图标路径
+const getIconPath = (icon) => {
+  // 如果已经是完整URL，直接返回
+  if (icon.startsWith('http://') || icon.startsWith('https://')) {
+    return icon;
+  }
+  // 否则作为本地资源路径处理
+  return icon.startsWith('/') ? `/images/icon/${icon}` : '';
+};
+
 // 链接跳转
 const jumpLink = (data) => {
   if (!data.link || data.link.trim() === "") {
@@ -85,10 +109,10 @@ const jumpLink = (data) => {
     return;
   }
 
-  // 处理内部路由
+  // 处理站内路由
   if (data.link.startsWith('/')) {
-    if (data.link === '/webmaster') {
-      // 特殊处理站长工具路由
+    if (data.link === '/onlinetools') {
+      // 其他在线工具路由
       router.push(data.link);
       window.scrollTo(0, 0);
     } else {

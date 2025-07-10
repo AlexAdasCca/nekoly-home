@@ -22,6 +22,9 @@
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
         </div>
+        <div class="version">
+          <div class="rebuild">build&nbsp;{{ config.rebuild }}</div>
+        </div>
         <el-card class="update">
           <template #header>
             <div class="card-header">
@@ -171,6 +174,11 @@ const jumpTo = (url) => {
 
         .num {
           font-size: 2rem;
+          font-family: "Pacifico-Regular";
+        }
+
+        .rebuild {
+          font-size: 1rem;
           font-family: "Pacifico-Regular";
         }
 

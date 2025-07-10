@@ -4,8 +4,8 @@
   "github": "https://github.com/imsyy/home",
   "home": "https://www.nekoly.xyz",
   "private": true,
-  "version": "4.1.4 (alpha 10)",
-  "rebuild": "202506050010a",
+  "version": "4.1.4 (beta 15)",
+  "rebuild": "202507100015b",
   "type": "module",
   "scripts": {
     "dev": "vite --host",

@@ -30,13 +30,23 @@
     "link": ""
   },
   {
+    "icon": "/ittoolsicon.ico",
+    "name": "IT-TOOLS",
+    "link": "https://tools.nekoly.xyz/"
+  },
+  {
+    "icon": "https://codestage.nekoly.xyz/favicon.ico",
+    "name": "代码截图",
+    "link": "https://codestage.nekoly.xyz/"
+  },
+  {
     "icon": "LaptopCode", 
     "name": "站点监测",
     "link": ""
   },
   {
     "icon": "Tools",
-    "name": "站长工具",
-    "link": "/webmaster"
+    "name": "其他工具",
+    "link": "/onlinetools"
   }
 ]

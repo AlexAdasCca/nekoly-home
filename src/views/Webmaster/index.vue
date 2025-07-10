@@ -36,8 +36,8 @@
         <router-link to="/" class="back-home">
           ← 返回首页
         </router-link>
-        <h1>站长工具</h1>
-        <p>实用的网站管理工具集合</p>
+        <h1>在线工具</h1>
+        <p>实用的在线工具集合</p>
       </div>
 
       <div class="tools-container">

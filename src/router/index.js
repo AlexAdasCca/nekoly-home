@@ -17,7 +17,7 @@ const routes = [
     ]
   },
   {
-    path: '/webmaster',
+    path: '/onlinetools',
     component: Webmaster
   },
   {
